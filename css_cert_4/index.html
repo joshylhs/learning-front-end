@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Technical Documentation Page</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="https://cloudflare.com">
+  </head>
+
+  <body>
+    <nav id='navbar'>
+      <header>Get Started with LangGraph</header>
+      <a href="#langgraph_overview" class="nav-link">LangGraph Overview</a>
+      <a href="#install_langgraph" class="nav-link">Install LangGraph</a>
+      <a href="#quickstart" class="nav-link">Quickstart</a>
+      <a href="#frontend_overview" class="nav-link">Frontend Overview</a>
+      <a href="#agent_chat_ui" class="nav-link">Agent Chat UI</a>
+    </nav>
+      
+    <main id="main-doc">
+    
+      <section class='main-section' id='langgraph_overview'>
+        <header>LangGraph Overview</header>
+        <p>Trusted by companies shaping the future of agents—including Klarna, Uber, J.P. Morgan, and more—LangGraph is a low-level orchestration framework and runtime for building, managing, and deploying long-running, stateful agents. LangGraph gives you fine-grained control to mix deterministic, hand-coded steps with LLM-driven agentic steps in the same graph, so you can build bespoke agents that behave exactly the way your application requires.</p>
+
+        <p>LangGraph is very low-level, and focused entirely on agent orchestration. Before using LangGraph, we recommend you familiarize yourself with some of the components used to build agents, starting with models and tools.</p>
+          
+        <p>We will commonly use LangChain components throughout the documentation to integrate models and tools, but you don’t need to use LangChain to use LangGraph. If you are just getting started with agents or want a higher-level abstraction, we recommend you use LangChain’s agents that provide prebuilt architectures for common LLM and tool-calling loops.</p>
+
+        <p>LangGraph is focused on the underlying capabilities important for agent orchestration: durable execution, streaming, human-in-the-loop, and more.</p>
+
+        <p>One of LangGraph’s core strengths is the ability to mix deterministic steps with LLM-driven agentic steps in a single graph. This lets you build bespoke workflows where parts of the logic are fully predictable and auditable while other parts are flexible and model-driven, giving you fine-grained control over exactly where and how AI is applied.</p>
+      </section>
+
+      <section class='main-section' id='install_langgraph'>
+        <header>Install LangGraph</header>
+
+        <p class='code-header'>To install the base LangGraph package:</p>
+        <div class='code-block'>
+          <code>
+pip install -U langgraph
+          </code>
+        </div>
+
+        <p>To use LangGraph you will usually want to access LLMs and define tools. You can do this however you see fit.</p>
+
+        <p>One way to do this (which we will use in the docs) is to use <a href="https://docs.langchain.com/oss/python/langchain/overview" target='_blank'>LangChain</a>.</p>
+
+        <p  class='code-header'>Install LangChain with:</p>
+        <div class='code-block'>
+          <code>
+pip install -U langchain
+# Requires Python 3.10+
+          </code>
+        </div>
+
+        <p>To work with specific LLM provider packages, you will need install them separately. Refer to the <a href="https://docs.langchain.com/oss/python/integrations/providers/overview">integrations</a> page for provider-specific installation instructions.</p>
+
+        <div class='info grey'><a href="https://docs.langchain.com/use-these-docs">Connect these docs</a> to Claude, VSCode, and more via MCP for real-time answers.</div>
+
+        <div class='info grey'><i class='circle-info'></i><a href='https://github.com/langchain-ai/docs/edit/main/src/oss/langgraph/install.mdx'>Edit this page on GitHub</a> or <a href='https://github.com/langchain-ai/docs/issues/new/choose'>file an issue</a>.
+
+      </section>
+
+      <section class='main-section' id='quickstart'>
+        
+        <header>Quickstart</header>
+
+        <p>This quickstart demonstrates how to build a calculator agent using the LangGraph Graph API or the Functional API.</p>
+
+        <div class='info green'>
+          <h3>Using an AI coding assistant?</h3>
+          <ul>
+            <li>Install the <a href="https://docs.langchain.com/use-these-docs">LangChain Docs MCP server</a> to give your agent access to up-to-date LangChain documentation and examples.</li>
+            <li>Install <a href="https://github.com/langchain-ai/langchain-skills">LangChain Skills</a> to improve your agent’s performance on LangChain ecosystem tasks.</li>
+          </ul>
+        </div>
+
+        <ul>
+            <li><a href="https://docs.langchain.com/use-these-docs">Use the Graph API</a> if you prefer to define your agent as a graph of nodes and edges.</li>
+            <li><a href="https://github.com/langchain-ai/langchain-skills">Use the Functional API</a>  if you prefer to define your agent as a single function.</li>
+        </ul>
+
+        <p>For conceptual information, see <a href="https://docs.langchain.com/oss/python/langgraph/graph-api">Graph API overview</a> and <a href="https://docs.langchain.com/oss/python/langgraph/functional-api">Functional API overview</a>.</p>
+
+        <div class='info grey'>
+          <p>For this example, you will need to set up a <a href="https://www.anthropic.com/">Claude (Anthropic)</a> account and get an API key. Then, set the <code class='inline-code'>ANTHROPIC_API_KEY</code> environment variable in your terminal.</p>
+        </div>
+
+        <h2>1. Define tools and model</h2>
+        <p>In this example, we’ll use the Claude Sonnet 4.5 model and define tools for addition, multiplication, and division.</p>
+
+        <div class='code-block'>
+          <code>
+from langchain.tools import tool
+from langchain.chat_models import init_chat_model
+
+model = init_chat_model(
+    "claude-sonnet-4-6",
+    temperature=0
+)
+
+
+# Define tools
+@tool
+def multiply(a: int, b: int) -&gt int:
+    """Multiply `a` and `b`.
+
+    Args:
+        a: First int
+        b: Second int
+    """
+    return a * b
+
+
+@tool
+def add(a: int, b: int) -&gt int:
+    """Adds `a` and `b`.
+
+    Args:
+        a: First int
+        b: Second int
+    """
+    return a + b
+
+
+@tool
+def divide(a: int, b: int) -&gt float:
+    """Divide `a` and `b`.
+
+    Args:
+        a: First int
+        b: Second int
+    """
+    return a / b
+
+
+# Augment the LLM with tools
+tools = [add, multiply, divide]
+tools_by_name = {tool.name: tool for tool in tools}
+model_with_tools = model.bind_tools(tools)
+          </code>
+        </div>
+
+        <h2>2. Define state</h2>
+        <p>The graph’s state is used to store the messages and the number of LLM calls.</p>
+
+        <div class='info green'>
+          <p><b>NOTE:</b> State in LangGraph persists throughout the agent’s execution. The <code class='inline-code'>Annotated</code> type with <code class='inline-code'>operater.add</code> ensures that new messages are appended to the existing list rather than replacing it.</p>
+        </div>
+
+        <div class='code-block'>
+          <code>
+from langchain.messages import AnyMessage
+from typing_extensions import TypedDict, Annotated
+import operator
+
+class MessagesState(TypedDict):
+    messages: Annotated[list[AnyMessage], operator.add]
+    llm_calls: int
+
+          </code>
+        </div>
+
+        <h2>3. Define model node</h2>
+        <p>The model node is used to call the LLM and decide whether to call a tool or not.</p>
+
+        <div class='code-block'>
+          <code>
+from langchain.messages import SystemMessage
+
+def llm_call(state: dict):
+    """LLM decides whether to call a tool or not"""
+
+    return {
+        "messages": [
+            model_with_tools.invoke(
+                [
+                    SystemMessage(
+                        content="You are a helpful assistant tasked with performing arithmetic on a set of inputs."
+                    )
+                ]
+                + state["messages"]
+            )
+        ],
+        "llm_calls": state.get('llm_calls', 0) + 1
+    }
+          </code>
+        </div>
+
+        <h2>4. Define tool node</h2>
+        <p>The tool node is used to call the tools and return the results.</p>
+
+        <div class='code-block'>
+          <code>
+from langchain.messages import ToolMessage
+
+def tool_node(state: dict):
+    """Performs the tool call"""
+
+    result = []
+    for tool_call in state["messages"][-1].tool_calls:
+        tool = tools_by_name[tool_call["name"]]
+        observation = tool.invoke(tool_call["args"])
+        result.append(ToolMessage(content=observation, tool_call_id=tool_call["id"]))
+    return {"messages": result}
+          </code>
+        </div>
+
+
+        <h2>5. Define end logic</h2>
+        <p>The conditional edge function is used to route to the tool node or end based upon whether the LLM made a tool call.</p>
+
+        <div class='code-block'>
+          <code>
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+
+def should_continue(state: MessagesState) -> Literal["tool_node", END]:
+    """Decide if we should continue the loop or stop based upon whether the LLM made a tool call"""
+
+    messages = state["messages"]
+    last_message = messages[-1]
+
+    # If the LLM makes a tool call, then perform an action
+    if last_message.tool_calls:
+        return "tool_node"
+
+    # Otherwise, we stop (reply to the user)
+    return END
+          </code>
+        </div>
+
+        <h2>6. Build and compile the agent</h2>
+        <p>The agent is built using the <a href="https://reference.langchain.com/python/langgraph/graph/state/StateGraph?_gl=1*tyr3sn*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTc3MDMkajYwJGwwJGgw"><code  class='inline-code'>StateGraph</code></a> class and compiled using the <a href="https://reference.langchain.com/python/langgraph/graph/state/StateGraph/compile?_gl=1*bf1wg6*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTc3MDMkajYwJGwwJGgw"><code  class='inline-code'>compile</code></a> method.</p>
+
+        <div class='code-block'>
+          <code>
+from typing import Literal
+from langgraph.graph import StateGraph, START, END
+
+def should_continue(state: MessagesState) -> Literal["tool_node", END]:
+    """Decide if we should continue the loop or stop based upon whether the LLM made a tool call"""
+
+    messages = state["messages"]
+    last_message = messages[-1]
+
+    # If the LLM makes a tool call, then perform an action
+    if last_message.tool_calls:
+        return "tool_node"
+
+    # Otherwise, we stop (reply to the user)
+    return END
+          </code>
+        </div>
+
+        <div class='info green'>
+          <p><b>NOTE:</b> Trace and debug your agent with <a href='https://smith.langchain.com/?utm_source=docs&utm_medium=cta&utm_campaign=langsmith-signup&utm_content=oss-langgraph-quickstart&_gl=1*3sm8hc*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyNTIzMjkkbzUkZzEkdDE3ODUyNTM0NTAkajYwJGwwJGgw'>LangSmith</a>. Follow the <a href='https://docs.langchain.com/langsmith/trace-with-langgraph'>tracing quickstart</a> to get set up. When ready for production, see <a href='https://docs.langchain.com/langsmith/deployment'>Deploy</a> for hosting options.</p>
+
+          <p>We recommend you also set up LangSmith Engine which monitors your traces, detects issues, and proposes fixes.</p>
+        </div>
+      
+        <p>Congratulations! You’ve built your first agent using the LangGraph Graph API.</p>
+      </section>
+
+      <section class="main-section" id='frontend_overview'>
+        <header>Frontend Overview</header>
+        <p>Build frontends that visualize LangGraph pipelines in real time. These patterns show how to render multi-step graph execution with per-node status and streaming content from custom <code class='inline-code'>StateGraph</code> workflows.</p>
+        <p>LangGraph’s frontend advantage is that the UI can follow the same structure as the graph. Nodes, state keys, checkpoints, interrupts, subgraphs, and streamed messages are all visible runtime concepts, so you can build interfaces that explain what the system is doing instead of hiding execution behind one assistant message.</p>
+
+        <div class='info'>
+          <p>These patterns use the v1 frontend SDK packages. If you are using an earlier version, see the migration guides for <a href="https://github.com/langchain-ai/langgraphjs/blob/main/libs/sdk-react/docs/v1-migration.md">React</a>, <a href='https://github.com/langchain-ai/langgraphjs/blob/main/libs/sdk-vue/docs/v1-migration.md'>Vue</a>, <a href='https://github.com/langchain-ai/langgraphjs/blob/main/libs/sdk-svelte/docs/v1-migration.md'>Svelte</a>, and <a href='https://github.com/langchain-ai/langgraphjs/blob/main/libs/sdk-angular/docs/v1-migration.md'>Angular</a>.</p>
+        </div>
+
+          <h2>Architecture</h2>
+          <p>LangGraph graphs are composed of named nodes connected by edges. Each node executes a step (classify, research, analyze, synthesize) and writes output to a specific state key. On the frontend, the SDK stream handle provides reactive access to node outputs, streaming tokens, and discovered subgraphs so you can map each node to a UI card.</p>
+            
+          <div class='code-block'>
+            <code>
+from langgraph.graph import StateGraph, MessagesState, START, END
+
+class State(MessagesState):
+    classification: str
+    research: str
+    analysis: str
+    synthesis: str
+
+graph = StateGraph(State)
+graph.add_node("classify", classify_node)
+graph.add_node("do_research", research_node)
+graph.add_node("analyze", analyze_node)
+graph.add_node("synthesize", synthesize_node)
+graph.add_edge(START, "classify")
+graph.add_edge("classify", "do_research")
+graph.add_edge("do_research", "analyze")
+graph.add_edge("analyze", "synthesize")
+graph.add_edge("synthesize", END)
+
+app = graph.compile()
+            </code>
+          </div>  
+
+          <p>On the frontend, <a href="https://reference.langchain.com/javascript/langchain-react/index/useStream?_gl=1*8g540e*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTg5ODAkajUkbDAkaDA."><code class='inline-code'>useStream</code></a> exposes <code class='inline-code'>stream.subgraphs</code> for graph-node discovery and selector helpers such as <code class='inline-code'>useMessages(stream, node)</code> for node-scoped streaming content. <code class='inline-code'>stream.values</code> still holds the full graph state when you need fields such as the final <code class='inline-code'>synthesis</code>. Angular uses the same stream API shape through <a href="https://reference.langchain.com/javascript/langchain-angular/injectStream?_gl=1*8g540e*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTg5ODAkajUkbDAkaDA."><code class='inline-code'>injectStream</code></a>.</p>
+
+          <div class='code-block'>
+            <code>
+import { useStream } from "@langchain/react";
+
+function Pipeline() {
+  const stream = useStream<typeof graph>({
+    apiUrl: "http://localhost:2024",
+    assistantId: "pipeline",
+  });
+
+  const classification = stream.values?.classification;
+  const research = stream.values?.research;
+  const analysis = stream.values?.analysis;
+  const graphNodes = [...stream.subgraphs.values()];
+}
+            </code>
+          </div>
+          <h2>What makes this different from a chat stream</h2>
+          <p>Custom graphs often power product workflows: research pipelines, approval flows, data pipelines, data enrichment, code review, planning, and multi-step analysis. The frontend SDK lets you render these workflows using graph-native signals:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Runtime concept</th>
+                <th>Frontend UX</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+              <tr>
+                <th>Named nodes</th>
+                <td>One card, timeline step, or status badge per graph node.</td>
+              </tr>
+
+              <tr>
+                <th>State keys</th>
+                <td>Dedicated UI regions for typed outputs such as classification, sources, analysis, and final synthesis.</td>
+              </tr>
+
+              <tr>
+                <th>Streaming metadata</th>
+                <td>Route partial messages to the node that produced them.</td>
+              </tr>
+
+              <tr>
+                <th>Checkpoints</th>
+                <td>Inspect or resume from prior graph states for debugging and auditability.</td>
+              </tr>
+
+              <tr>
+                <th>Interrupts</th>
+                <td>Pause a node for human input, approval, or correction, then continue.</td>
+              </tr>
+
+              <tr>
+                <th>Subgraphs</th>
+                <td>Reveal nested execution only when the user needs more detail.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>Because the SDK exposes these concepts directly, you can scale from a simple chat panel to a full workflow debugger without changing the backend protocol.</p>
+
+          <h2>Patterns</h2>
+          <div class='side-by-side'>
+            <div class='info'>
+              <h3>Custom stream channels</h3>
+              <p>Stream custom sever-side data to the frontend and read it with <code class='inline-code'>useExtension</code> and <code class='inline-code'>useChannel</code>.</p>
+            </div>
+            <div class='info'>
+              <h3>Graph Execution</h3>
+              <p>Visualise multi-step graph pipelines with per-node status and streaming content</p>
+            </div>
+          </div>  
+            
+          <h2>Related patterns</h2>
+          <p>The <a href="https://docs.langchain.com/oss/python/langchain/frontend/overview">LangChain frontend patterns</a>—markdown messages, tool calling, human-in-the-loop, resumable streams, and time travel—work with any LangGraph graph. The stream API provides the same core data model whether you use <code class='inline-code'>createAgent</code>, <code class='inline-code'>createDeepAgent</code>, or a custom <code class='inline-code'>StateGraph</code>.</p>
+
+
+        </section>
+
+      <section class="main-section" id='agent_chat_ui'>
+        <header>Agent Chat UI</header>
+        <p><a href="https://github.com/langchain-ai/agent-chat-ui">Agent Chat UI</a> is a Next.js application that provides a conversational interface for interacting with any LangChain agent. It supports real-time chat, tool visualization, and advanced features like time-travel debugging and state forking. Agent Chat UI works seamlessly with agents created using <a href="https://reference.langchain.com/python/langchain/agents/factory/create_agent?_gl=1*17axm1l*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMjAwODUkajI5JGwwJGgw"><code class="inline-code">create_agent</code></a> and provides interactive experiences for your agents with minimal setup, whether you’re running locally or in a deployed context (such as <a href="https://docs.langchain.com/langsmith/observability">LangSmith</a>).
+        
+        Agent Chat UI is open source and can be adapted to your application needs.</p>  
+
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/lInrwVnZ83o?si=AztUPq7bhF-5CrTs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        
+        <div class='info green'>
+          <p>You can use generative UI in the Agent Chat UI. For more information, see <a href="https://docs.langchain.com/langsmith/generative-ui-react">Implement generative user interfaces with LangGraph</a>.</p>
+        </div>
+
+        <h2>Quick start</h2>
+          <p>The fastest way to get started is using the hosted version:</p>
+          <ol>
+            <li><b>Visit <a href="https://agentchat.vercel.app/">Agent Chat UI</a></b></li>
+            <li><b>Connect your agent</b> by entering your deployment URL or local server address</li>
+            <li><b>Start chatting</b> - the UI will automatically detect and render tool calls and interrupts</li>
+          </ol>
+
+          <h2>Local development</h2>
+          <p>For customization or local development, you can run Agent Chat UI locally:</p>
+          <div class='code-block'>
+            <code>
+# Create a new Agent Chat UI project
+npx create-agent-chat-app --project-name my-chat-ui
+cd my-chat-ui
+
+# Install dependencies and start
+pnpm install
+pnpm dev
+            </code>
+          </div>
+
+          <h2>Connect to your agent</h2>
+          <p>
+            Agent Chat UI can connect to both local and deployed agents.
+            
+            After starting Agent Chat UI, you’ll need to configure it to connect to your agent:
+          </p>
+          <ol>
+            <li><b>Graph ID</b>: Enter your graph name (find this under graphs in your <code class="inline-code">langgraph.json</code> file)</li>
+            <li><b>Deployment URL</b>: Your Agent server’s endpoint (e.g., <code class="inline-code">http://localhost:2024</code> for local development, or your deployed agent’s URL)</li>
+            <li><b>LangSmith API key (optional)</b>: Add your LangSmith API key (not required if you’re using a local Agent server)</li>
+          </ol>
+
+          <p>Once configured, Agent Chat UI will automatically fetch and display any interrupted threads from your agent.</p>
+          
+          <div class='info green'>
+            <p>Agent Chat UI has out-of-the-box support for rendering tool calls and tool result messages. To customize what messages are shown, see <a href="https://github.com/langchain-ai/agent-chat-ui?tab=readme-ov-file#hiding-messages-in-the-chat">Hiding Messages in the Chat</a>.</p>
+      </section>
+
+      <div class='divider'></div>
+
+      <footer id='others'>
+        <div>
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://forum.langchain.com/?_gl=1*1prpu6q*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Forum</a></li>
+            <li><a href="https://changelog.langchain.com/?_gl=1*1prpu6q*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Changelog</a></li>
+            <li><a href="https://academy.langchain.com/?_gl=1*1prpu6q*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Langchain Academy</a></li>
+            <li><a href="https://www.langchain.com/contact-sales?_gl=1*1prpu6q*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Contact Sales</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="https://langchain.com/?_gl=1*crsag1*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Home</a></li>
+            <li><a href="https://trust.langchain.com/?_gl=1*crsag1*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Trust Center</a></li>
+            <li><a href="https://langchain.com/careers?_gl=1*crsag1*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Careers</a></li>
+            <li><a href="https://blog.langchain.com/?_gl=1*crsag1*_gcl_au*MTkwNzY0MjU2Ny4xNzg1MjE1NDc1*_ga*MTUxNDM5ODkyNC4xNzQ5MzgyNTE0*_ga_47WX3HKKY2*czE3ODUyMTU0NzQkbzMkZzEkdDE3ODUyMTgwODYkajYwJGwwJGgw">Blog</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

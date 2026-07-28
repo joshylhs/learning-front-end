@@ -1,0 +1,191 @@
+html {
+  font-family: helvetica;
+  text-align:justify;
+  background-color:beige;
+  
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* nav bar */
+nav {
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0; 
+  width: 17rem;
+  overflow-y: auto;
+
+  display:flex;
+  flex-direction:column;
+  text-align: left;
+  background-color:whitesmoke;
+  border-right:3px solid black
+}
+
+nav * {
+  /* height:2rem; */
+  border-bottom:3px solid black;
+  background-color:white;
+  text-decoration:none;
+  color:black;
+  padding: 1rem 1.5rem;
+}
+
+/* main */
+main {
+  margin-left: calc(17rem + 3px);
+  padding: 2rem; 
+  overflow-x: hidden;
+}
+
+
+/* code */
+div.code-block {
+  margin: 0.5rem auto 2rem auto;
+  width:95%;
+  padding:0 2.5rem;
+  border-radius:0.5rem;
+  white-space: pre-wrap;
+  background-color: rgb(195, 239, 195);
+}
+
+.inline-code {
+  color: rgb(44, 153, 189);
+  background-color:lightblue;
+  padding:0.2rem;
+  border-radius:0.3rem;
+}
+/* code */
+
+
+/* headers */
+.main-section header:first-child {
+  color:pink;
+  text-align:center;
+  margin:2rem 0 0.5rem 0;
+  font-size:1.8rem;
+}
+header {
+  font-weight: bold;
+  font-size:1.5rem;
+}
+
+h2 {
+  font-size:1.3rem;
+  margin: 1.4rem 0 0.1rem 0;
+  color:rgb(0, 65, 0);
+}
+
+h3 {
+  margin:0.5rem;
+}
+
+div h3 {
+  text-align:center;
+}
+
+ul, ol {
+  margin:0.75rem;
+}
+/* headers */
+
+
+
+/* table */
+table {
+  margin: 2rem auto;
+  border-top:3px solid grey;
+  border-bottom:3px solid grey;
+  font-size:0.9rem;
+  width: 97%;
+}
+
+table * {
+  border-bottom:1px solid grey;
+  padding:0.5rem;
+}
+/* table */
+
+iframe {
+  width:98%;
+  margin: 1rem auto;
+  border-radius:1rem;
+}
+
+p {
+  line-height:1.3rem;
+  margin:0 0 1rem 0;
+}
+
+a {
+  color:darkgreen;
+}
+
+a:hover, a:focus {
+  color: rgba(0, 128, 0, 0.75);
+}
+a:active {
+  color: rgba(0, 128, 0, 0.25);
+}
+a:visited {
+  color:pink
+}
+
+/* tabs */
+.info {
+  margin: 0.5rem auto 0.75rem auto;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: whitesmoke;
+  border: 2px solid lightgrey;
+  width:98%;
+}
+div.side-by-side {
+  display:flex;
+  flex-direction: row;
+  justify-content:space-between;
+}
+div.side-by-side div {
+  width: 48%;
+
+}
+/* tabs */
+
+li {
+  line-height:1.2em;
+  margin:0.2em;
+}
+
+
+footer {
+  display:flex;
+  flex-direction:row;
+  justify-content: space-between;
+}
+footer > * {
+  width:40%;
+}
+
+.divider {
+  height:2px;
+  margin: 2rem 0;
+  background-color: black;
+
+}
+
+@media screen and (max-width: 640px)  {
+  nav {
+    display:none;
+  }
+
+  main {
+    margin: 0;
+  }
+
+}
